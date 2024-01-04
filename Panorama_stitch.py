@@ -9,9 +9,12 @@ from skimage.color import rgb2gray
 from skimage.measure import ransac
 import os
 folder = os.path.dirname(os.path.abspath(__file__))
+# join the paths
+matplot = os.path.join(folder, 'matplot')
 if not os.path.exists('matplot'):
     os.makedirs('matplot')
-
+print(folder)
+print(matplot)
 def blankImage(imL):
     imLalpha = imL.copy()
     imLalpha[:,:,0] = 0
@@ -80,7 +83,11 @@ axA.axis('off')
 # save the plt as an image
 # if matplot folder does not exist, create it
 
-fig.savefig('matplot/P1.1-PLOT-matches-all.jpg', dpi=300)
+# fig.savefig('matplot/P1.1-PLOT-matches-all.jpg', dpi=300)
+# use os.path.join to join the paths
+# give title to the plt
+plt.title("matches between the left and right images")
+fig.savefig(os.path.join(matplot, 'P1.1-PLOT-matches-all.jpg'), dpi=300)
 
 enlargedL = blankImage(np.resize(imR,(imR.shape[0], imR.shape[1] * 2, 3)))
 enlargedL[:,:imR.shape[1] ,0] = imL[:,:,0]
@@ -96,15 +103,15 @@ dst = np.roll( keypointsL[matchesLR[:,0]], 1, axis = 1)
 src = np.roll( keypointsR[matchesLR[:,1]], 1, axis = 1)
 #src = src + imL.shape[1]*np.column_stack((np.zeros(len(src)),np.ones(len(src))))
 model_robust, inliers = ransac((src, dst),  ProjectiveTransform, min_samples=4, residual_threshold=1, max_trials=1000000)
-model_robust.params
 
 fig = plt.figure(2,figsize = (12, 4))
 axA = plt.subplot(111)
 plt.gray()
 plot_matches(axA, imL, imR, keypointsL, keypointsR, matchesLR[inliers]) #, matches_color = 'r')
 axA.axis('off')
-
-fig.savefig('matplot/P2.1-PLOT-matches-inliers.jpg', dpi=300)
+plt.title("matches between the left and right images (inliers)")
+# fig.savefig('matplot/P2.1-PLOT-matches-inliers.jpg', dpi=300)
+fig.savefig(os.path.join(matplot, 'P2.1-PLOT-matches-inliers.jpg'), dpi=300)
 
 fig = plt.figure(3,figsize = (12, 14))
 
@@ -128,8 +135,8 @@ model_bad.estimate(src, dst)
 plt.imshow( warp(enlargedR, model_bad.inverse))
 plt.title("reference frame with the right image (reprojected badly)")
 
-fig.savefig('matplot/P1.2-PLOT-reprojected-matches-all.jpg', dpi=300)
-
+# fig.savefig('matplot/P1.2-PLOT-reprojected-matches-all.jpg', dpi=300)
+fig.savefig(os.path.join(matplot, 'P1.2-PLOT-reprojected-matches-all.jpg'), dpi=300)
 
 
 enlargedR_1 = blankImage(np.resize(imR,(imR.shape[0] , imR.shape[1]  * 2, 3)))
@@ -153,8 +160,8 @@ imR_dtrans = imL_dtrans.copy()
 imR_dtrans = warp(imR_dtrans, model_robust.inverse)
 #plt.imshow(img_2_alpha)
 plt.imshow( imR_dtrans)
-fig.savefig('matplot/APPDX-1.1-dtrans1-dtrans2.jpg', dpi=300)
-
+# fig.savefig('matplot/APPDX-1.1-dtrans1-dtrans2.jpg', dpi=300)
+fig.savefig(os.path.join(matplot, 'APPDX-1.1-dtrans1-dtrans2.jpg'), dpi=300)
 
 alphaL = calculateAlpha(imL_dtrans,imR_dtrans)
 alphaR = calculateAlpha(imR_dtrans,imL_dtrans)
@@ -170,7 +177,8 @@ plt.subplot(122)
 plt.title("alpha2 in Ref. frame (RdtRef)")
 
 plt.imshow(alphaR)
-fig.savefig('matplot/APPDX-1.2-alpha1-alpha2.jpg', dpi=300)
+# fig.savefig('matplot/APPDX-1.2-alpha1-alpha2.jpg', dpi=300)
+fig.savefig(os.path.join(matplot, 'APPDX-1.2-alpha1-alpha2.jpg'), dpi=300)
 fig = plt.figure(5, figsize=(12, 14))
 plt.subplot(311)
 
@@ -194,7 +202,8 @@ plt.imshow(Panorama)
 plt.title("Panorama")
 
 # plt.show()
-fig.savefig('matplot/P2.2-PLOT-reprojected-matches-inliers.jpg', dpi=300)
+# fig.savefig('matplot/P2.2-PLOT-reprojected-matches-inliers.jpg', dpi=300)
+fig.savefig(os.path.join(matplot, 'P2.2-PLOT-reprojected-matches-inliers.jpg'), dpi=300)
 # save the Panorama as an image
 # if Panorama folder does not exist, create it
 if not os.path.exists('Panorama'):
