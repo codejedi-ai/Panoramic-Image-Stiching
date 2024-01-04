@@ -8,8 +8,10 @@ from skimage.transform import warp, ProjectiveTransform
 from skimage.color import rgb2gray
 from skimage.measure import ransac
 import os
+folder = os.path.dirname(os.path.abspath(__file__))
 if not os.path.exists('matplot'):
     os.makedirs('matplot')
+
 def blankImage(imL):
     imLalpha = imL.copy()
     imLalpha[:,:,0] = 0
@@ -27,7 +29,7 @@ def applyAlpha(image,alpha):
     imagealpha[:,:,1] = np.multiply(alpha,image[:,:,1])
     imagealpha[:,:,2] = np.multiply(alpha,image[:,:,2])
     return imagealpha
-def boundaryDT(image):
+def calculate_dtrans(image):
     length = image.shape[1]
     height = image.shape[0]
 
@@ -136,39 +138,39 @@ enlargedR_1[:,:imR.shape[1] ,1] = imR[:,:,1]
 enlargedR_1[:,:imR.shape[1] ,2] = imR[:,:,2]
 fig = plt.figure(4,figsize = (12, 3))
 plt.subplot(121)
-plt.title("Left image DT in Ref. frame (LdtRef)")
+plt.title("dtrans1 in Ref. frame (LdtRef)")
 
 
 imL_dtrans =np.zeros((imL.shape[0] , imL.shape[1]  * 2))
-imL_dtrans[:,:imL.shape[1]] = boundaryDT(imL)
+imL_dtrans[:,:imL.shape[1]] = calculate_dtrans(imL)
 
 plt.imshow(imL_dtrans)
 
 
 plt.subplot(122)
-plt.title("Right image DT in Ref. frame (RdtRef)")
+plt.title("dtrans2 in Ref. frame (RdtRef)")
 imR_dtrans = imL_dtrans.copy()
 imR_dtrans = warp(imR_dtrans, model_robust.inverse)
 #plt.imshow(img_2_alpha)
 plt.imshow( imR_dtrans)
-fig.savefig('matplot/APPDX-1.1-ALPHA-Leftimg-Rightimg.jpg', dpi=300)
+fig.savefig('matplot/APPDX-1.1-dtrans1-dtrans2.jpg', dpi=300)
 
 
 alphaL = calculateAlpha(imL_dtrans,imR_dtrans)
 alphaR = calculateAlpha(imR_dtrans,imL_dtrans)
 fig = plt.figure(4,figsize = (12, 3))
 plt.subplot(121)
-plt.title("Left image DT in Ref. frame (LdtRef)")
+plt.title("alpha1 in Ref. frame (LdtRef)")
 
 
 plt.imshow(alphaL )
 
 
 plt.subplot(122)
-plt.title("Right image DT in Ref. frame (RdtRef)")
+plt.title("alpha2 in Ref. frame (RdtRef)")
 
 plt.imshow(alphaR)
-fig.savefig('matplot/APPDX-1.2-ALPHA-DT-Leftimg-Rightimg.jpg', dpi=300)
+fig.savefig('matplot/APPDX-1.2-alpha1-alpha2.jpg', dpi=300)
 fig = plt.figure(5, figsize=(12, 14))
 plt.subplot(311)
 
